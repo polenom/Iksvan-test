@@ -8,7 +8,6 @@ class User(AbstractUser):
     @property
     def balance(self):
         amount = self.transaction.all().aggregate(Sum("amount"))["amount__sum"]
-        print(amount,111111111)
         if amount:
             return amount
         return 0
