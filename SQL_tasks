@@ -1,0 +1,20 @@
+1)
+select nb.title, count(nb.title) as amount
+from notebooks_notebook as nn left join notebooks_brand as nb on nn.brand_id = nb.id
+group by nb.title
+order by amount desc
+
+2)
+select  case when ceil(width)::int % 5 = 0 then ceil(width)
+	else 	ceil(width)::int / 5 *5 +5
+end as width,
+	case when ceil(depth)::int % 5 = 0 then ceil(depth)
+	else 	ceil(depth)::int / 5 *5 +5
+end as depth,
+	case when ceil(height)::int % 5 = 0 then ceil(height)
+	else 	ceil(height)::int / 5 *5 +5
+end as height
+,count(*)
+from notebooks_notebook
+group by 1,2,3
+order by 1,2,3
