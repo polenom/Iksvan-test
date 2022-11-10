@@ -63,6 +63,6 @@ app.autodiscover_tasks(["api.service"])
 app.conf.beat_schedule = {
     'add-every-30-seconds': {
         'task': 'api.service.add',
-        'schedule': crontab(hour=7, minute=0, day_of_week="1-5"),
+        'schedule': crontab(hour=7, minute=0, day_of_week="1-5")
     },
 }

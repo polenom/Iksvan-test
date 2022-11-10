@@ -1,0 +1,27 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis
+    restart: always
+
+
+  django:
+    build:
+      context: ./
+    volumes:
+      - ./db:/app/db
+    ports:
+     - "8000:8000"
+    command: sh -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"
+
+  worker:
+    restart: always
+    build:
+      context: ./
+    volumes:
+      - ./db:/app/db
+    depends_on:
+      - django
+      - redis
+    command: ["celery", "-A", "main", "worker", "-B"]

@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'db/db.sqlite3',
     }
 }
 
@@ -172,7 +172,7 @@ EMAIL_HOST_USER = os.getenv("EMAIL_ADDRESS")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD")
 EMAIL_PORT = 587
 
-REDIS_HOST = "0.0.0.0"
+REDIS_HOST = "redis"
 REDIS_PORT = "6379"
 CELERY_BROKER_URL = "redis://" + REDIS_HOST + ":" + REDIS_PORT + "/0"
 CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 3600}
