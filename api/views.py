@@ -22,12 +22,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Transaction.objects.filter(user=self.request.user)
 
-    def create(self, request, *args, **kwargs):
-        request.data['user'] = self.request.user.pk
-        return super().create(request, *args, **kwargs)
-
-
-
 
 class RegistrationUser(generics.CreateAPIView, GetTokensForUser):
     serializer_class = UserSerializer
@@ -54,7 +48,7 @@ class GetUserProfile(generics.RetrieveAPIView):
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthor, ]
     serializer_class = CategorySerializer
 
     def get_queryset(self):

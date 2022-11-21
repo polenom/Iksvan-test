@@ -19,30 +19,28 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ["amount", "timestamp", "category", "organization", "user", "id"]
+        fields = ["amount", "timestamp", "category", "organization", "id"]
         extra_kwargs = {
-            "user": {"write_only": True},
             "id": {"read_only": True}
         }
 
     def create(self, validated_data):
-        category, _ = validated_data["user"].categories.get_or_create(title=validated_data["category"]["title"])
+        category, _ = self.context['request'].user.categories.get_or_create(title=validated_data["category"]["title"])
         return Transaction.objects.create(
-            user=validated_data["user"],
+            user=self.context['request'].user,
             amount=validated_data["amount"],
             organization=validated_data["organization"],
             category=category
         )
 
     def update(self, instance, validated_data):
-        instance.amount = validated_data.get("amount")if validated_data.get("amount") else instance.amount
-        instance.organization = validated_data.get("organization") if validated_data.get("organization") else instance.organization
+        instance.amount = validated_data.get("amount") if validated_data.get("amount") else instance.amount
+        instance.organization = validated_data.get("organization") if validated_data.get(
+            "organization") else instance.organization
         if validated_data.get("category"):
-            instance.category, _ = instance.user.categories.get_or_create(title= validated_data.get("category")["title"])
+            instance.category, _ = instance.user.categories.get_or_create(title=validated_data.get("category")["title"])
         instance.save()
         return instance
-
-
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -53,10 +51,9 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "password", "email", "balance", "categories"]
         extra_kwargs = {
-            "password" : {"write_only": True},
+            "password": {"write_only": True},
 
         }
-
 
     def create(self, validated_data):
         user = User.objects.create(
@@ -73,4 +70,12 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ["id", "title"]
-        read_only_fields = ["id"]
+        extra_kwargs = {
+            "id": {"read_only": True},
+        }
+
+    def create(self, validated_data):
+        return Category.objects.create(
+            user=self.context['request'].user,
+            title=validated_data['title']
+        )
